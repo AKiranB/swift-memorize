@@ -3,33 +3,42 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var emojis: [String] = ["👻", "💀", "👽", "👾"]
-    @State private var cardToAdd: String = ""
+    @State private var emojis: [String] = ["👻", "💀", "👽", "👾", "👻", "💀", "👽", "👾" ]
+    
+    @State private var cardCount: Int = 4
     
     var body: some View {
         VStack {
-            HStack {
-                ForEach(0..<emojis.count, id: \.self) { index in
-                    CardView(content:emojis[index])
-                }
-              
-         
-               
-            }
-            HStack {
-                TextField("Add Emoji", text:$cardToAdd)
-                Button("Add Card"){
-                    emojis.append(cardToAdd)
-                }
-                Button("remove Card"){
-
-                    emojis.removeLast()
-                }
-            }
+            cards
+            cardCountAdjusters
         }
-
         .foregroundColor(.orange)
         .padding()
+    }
+    
+    func cardCountAdjuster (by offset:Int, symbol:String) -> some View {
+        Button(action :{
+        cardCount += offset
+        }, label: {
+            Image(systemName: symbol)
+        })
+        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
+    }
+ 
+    var cardCountAdjusters: some View {
+        return HStack{
+            cardCountAdjuster(by: +1, symbol: "rectangle.stack.badge.plus.fill" )
+            Spacer()
+            cardCountAdjuster(by: -1, symbol: "rectangle.stack.badge.minus.fill")
+        }
+    }
+    
+    var cards: some View {
+        HStack {
+            ForEach(0..<cardCount, id: \.self) { index in
+                CardView(content:emojis[index])
+            }
+        }
     }
 }
 
